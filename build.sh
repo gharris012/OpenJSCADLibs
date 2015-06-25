@@ -6,11 +6,15 @@ while [ ! -d "${libdirprefix}${libdir}" ]; do
 done
 echo "Found library in ${libdirprefix}${libdir}"
 
+find ./ -links +1 | grep -q "$(basename $0)" || ( ln "$0" && echo "Linking build script" )
+
 # copy in any library files we need
 for i in $(grep -h 'include' *.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p'); do
-    echo "checking for $i"
-    if [ -f "${libdirprefix}${libdir}/$i" ]; then
-        echo " linking"
+    echo -n "checking for $i"
+    if [ -f "$i" ]; then
+        echo " .. exists"
+    elif [ -f "${libdirprefix}${libdir}/$i" ]; then
+        echo " .. linking"
         ln "${libdirprefix}${libdir}/$i"
     fi
 done
