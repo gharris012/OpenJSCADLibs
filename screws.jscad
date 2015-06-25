@@ -33,8 +33,8 @@ screw = function(argType, argLength)
 nut = function(argType, argScrew)
 {
     var types = {
-        "1/4x7x2.3": {
-            "Name": "1/4x7x2.3",
+        "1/4": {
+            "Name": "1/4",
             "diameter": 7.0,
             "height": 2.3,
             "screw": "1/4"

@@ -18,3 +18,12 @@ makeAxis = function (extents)
     axis.push(Char('Y').translate([-5,extents[1] + 5,0]).setColor(0,0,0));
     return union(axis);
 }
+
+hullZ = function (e, offset)
+{
+    var body = union(e);
+    var shape = body.sectionCut(CSG.OrthoNormalBasis.Z0Plane());
+    var hulledShape = hull(shape);
+    var hulledBody = hulledShape.extrude({offset:offset});
+    return hulledBody;
+}

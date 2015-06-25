@@ -6,7 +6,7 @@ while [ ! -d "${libdirprefix}${libdir}" ]; do
 done
 echo "Found library in ${libdirprefix}${libdir}"
 
-find ./ -links +1 | grep -q "$(basename $0)" || ( ln "$0" && echo "Linking build script" )
+find ./ -links +1 -type f | grep -q "$(basename $0)" || ( ln "$0" && echo "Linking build script" )
 
 # copy in any library files we need
 for i in $(grep -h 'include' *.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p'); do
@@ -19,5 +19,7 @@ for i in $(grep -h 'include' *.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p'); 
     fi
 done
 
+grep -q "gcode/" .gitignore 2>&1 > /dev/null || echo "gcode/" >> .gitignore
+
 # add links to .gitignore
-find * -links +1 -print0 | xargs -0 -L 1 -I {} sh -c 'grep -q {} .gitignore && echo -n "" || echo {}' >> .gitignore
+find * -links +1 -type f -print0 | xargs -0 -L 1 -I {} sh -c 'grep -q {} .gitignore && echo -n "" || echo {}' >> .gitignore
