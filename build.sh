@@ -19,7 +19,7 @@ for i in $(grep -h 'include' *.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p'); 
     fi
 done
 
-grep -q "gcode/" .gitignore 2>&1 > /dev/null || echo "gcode/" >> .gitignore
+grep -q "gcode/" .gitignore &>/dev/null || echo "gcode/" >> .gitignore
 
 # add links to .gitignore
 find * -links +1 -type f -print0 | xargs -0 -L 1 -I {} sh -c 'grep -q {} .gitignore && echo -n "" || echo {}' >> .gitignore
