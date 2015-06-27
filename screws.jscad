@@ -20,6 +20,27 @@ screw = function(argType, argLength)
                 });
     }
 
+    this.roundPost = function (argWallThickness, argLength)
+    {
+        var wallThickness = argWallThickness || 2;
+        var length = argLength || this.length;
+        return CSG.cylinder({
+                    start: [0,0,0],
+                    end:   [0,0,length],
+                    radius: ( this.diameter / 2 ) + wallThickness
+                }).subtract(this.hole());
+    }
+
+    this.squarePost = function (argWallThickness, argLength)
+    {
+        var wallThickness = argWallThickness || 2;
+        var length = argLength || this.length;
+        return CSG.cube({
+                    start: [0,0,0],
+                    radius: [( this.diameter / 2 ) + wallThickness, ( this.diameter / 2 ) + wallThickness, length / 2 ]
+                }).subtract(this.hole().translate([0,0,-length/2]));
+    }
+
     this.hole = function ()
     {
         return CSG.cylinder({
