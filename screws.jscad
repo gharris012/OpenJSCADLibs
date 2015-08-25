@@ -125,6 +125,11 @@ washer = function(type, args)
         this.nut = new nut(this.type.screw);
     }
 
+    this.getRecessHeight = function()
+    {
+        return this.height + this.nut.height;
+    }
+
     this.washer = function()
     {
         return CSG.cylinder({
@@ -144,11 +149,10 @@ washer = function(type, args)
                 });
     }
 
-    this.recess = function(height, tolerance)
+    this.recess = function(tolerance)
     {
         tolerance = tolerance || tol;
-        height = height || this.nut.height;
-        height += this.height;
+        height = this.getRecessHeight()
 
         this.recessHeight = height;
 
