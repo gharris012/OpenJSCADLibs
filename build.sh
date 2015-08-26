@@ -23,3 +23,12 @@ grep -q "gcode/" .gitignore &>/dev/null || echo "gcode/" >> .gitignore
 
 # add links to .gitignore
 find * -links +1 -type f -print0 | xargs -0 -L 1 -I {} sh -c 'grep -q {} .gitignore && echo -n "" || echo {}' >> .gitignore
+
+echo -n "checking for gcode directory"
+# make gcode directory
+if [ ! -d 'gcode' ]; then
+    echo " .. creating"
+    mkdir gcode
+else
+    echo " .. exists"
+fi
