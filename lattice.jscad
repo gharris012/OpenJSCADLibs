@@ -53,7 +53,7 @@ makeSpar = function (size, thickness, rot, xh, yh)
     return spar;
 }
 
-lattice = function (width,length,size,thickness,angle,count)
+lattice = function (width,length,size,thickness,angle,count,xOffset,yOffset)
 {
     var deg2rad = Math.PI/180;
     var rad2deg = 180/Math.PI;
@@ -65,7 +65,10 @@ lattice = function (width,length,size,thickness,angle,count)
 
     var space = length / count;
 
-    var xStart = 0;
+    xOffset = xOffset || 0;
+    yOffset = yOffset || 0;
+
+    var xStart = xOffset;
     var xFinish = width + space;
 
     var spars = [];
@@ -77,6 +80,8 @@ lattice = function (width,length,size,thickness,angle,count)
     var xh = 0;
     var ySpace = Math.tan((90-angle) * deg2rad) * space;
     var yTotal = length + ( Math.tan((90-angle) * deg2rad) * width );
+
+    sparSpace = ySpace;
 
     for ( xMv = xStart ; xMv < xFinish || yMv < yTotal ; xMv = xMv + space )
     {

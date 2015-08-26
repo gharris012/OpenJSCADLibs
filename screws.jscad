@@ -16,6 +16,18 @@ screw = function(type, args)
             "defaultLength": 6.0,
             "defaultFit": "free"
         },
+        "M2.5": {
+            "Name": "M2.5",
+            "fit": { // clearance and tap drill sizes (mostly from: http://www.csgnetwork.com/screwmetmachtable.html)
+                     // do not add tolerance
+                "free": 3.1,
+                "close": 2.7,
+                "nominal": 5.80, // diameter including threads as measured using calipers
+                "tap": 2.15
+            },
+            "defaultLength": 6.0,
+            "defaultFit": "free"
+        },
         "M6": {
             "Name": "M6",
             "fit": { // clearance and tap drill sizes (mostly from: http://www.csgnetwork.com/screwmetmachtable.html)
