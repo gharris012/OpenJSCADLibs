@@ -92,6 +92,17 @@ screw = function(type, args)
         return shaft;
     }
 
+    this.headRecess = function(args)
+    {
+        var head = args && args.head && this.type.head[args.head] || this.type.head[this.head];
+        var tolerance  = args && args.tol || tol;
+        return CSG.cylinder({
+                            start: [0,0,0],
+                            end:   [0,0,head.height + tolerance],
+                            radius: ( head.diameter + tolerance ) / 2
+                        })
+    }
+
     this.roundPost = function (wallThickness, length)
     {
         wallThickness = wallThickness || 2;
