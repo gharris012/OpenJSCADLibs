@@ -22,10 +22,10 @@ screw = function(type, args)
                      // do not add tolerance
                 "free": 3.1,
                 "close": 2.7,
-                "nominal": 5.80, // diameter including threads as measured using calipers
+                "nominal": 2.40, // diameter including threads as measured using calipers
                 "tap": 2.15
             },
-            "defaultLength": 6.0,
+            "defaultLength": 8.0,
             "defaultFit": "free"
         },
         "M6": {
@@ -97,6 +97,12 @@ washer = function(type, args)
             "diameter": 12.0,
             "height": 1.0,
             "screw": "M6"
+        },
+        "M2.5": {
+            "Name": "M2.5",
+            "diameter": 5.9,
+            "height": 0.6,
+            "screw": "M2.5"
         }
     };
     this.type = types[type];
@@ -192,6 +198,13 @@ nut = function(type, args)
             "length": 9.8,   // distance from side to side
             "height": 3.8,
             "screw": "M6"
+        },
+        "M2.5": {
+            "Name": "M2.5",
+            "diameter": 5.5, // distance from point to point
+            "length": 5.0,   // distance from side to side
+            "height": 1.9,
+            "screw": "M2.5"
         }
     };
     this.type = types[type];
