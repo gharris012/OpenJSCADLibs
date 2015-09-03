@@ -3,7 +3,26 @@
 // args.length
 screw = function(type, args)
 {
-    var types = {
+    var types = { // height excludes head
+        "1/4-20": {
+            "Name": "1/4-20",
+            "fit": { // clearance and tap drill sizes (mostly from: http://www.etantdonnes.com/MACHINE/TABLES/screw.html)
+                     // do not add tolerance
+                "free": 6.8,    // 0.266in -> 6.7564mm
+                "close": 6.6,   // 0.257in -> 6.5278mm
+                "nominal": 6.3, // diameter including threads as measured using calipers
+                "tap": 5.1     // 0.2101in -> 5.1054mm
+            },
+            "head": { // attempt to describe the type of head on the bolt
+                "pan-square": {
+                    "shape": "round",
+                    "height": 4.2,
+                    "diameter": 11.8
+                }
+            },
+            "defaultLength": 76.0,
+            "defaultFit": "free"
+        },
         "#4-40": {
             "Name": "#4-40",
             "fit": { // clearance and tap drill sizes (mostly from: http://www.csgnetwork.com/screwnummachtable.html)
@@ -45,15 +64,32 @@ screw = function(type, args)
     this.type = types[type];
     this.length = args && args.length || this.type["defaultLength"];
     this.fit = args && args.fit || this.type.defaultFit;
+    this.head = args && args.head || null;
     this.diameter = this.type.fit[this.fit];
 
-    this.screw = function ()
+    this.screw = function (args)
     {
-        return CSG.cylinder({
-                    start: [0,0,0],
-                    end:   [0,0,this.length],
-                    radius: this.diameter / 2
-                });
+        var head = this.type.head[this.head];
+        var diameter = args && args.fit && this.type.fit[args.fit] || this.type.fit['nominal'];
+
+        var shaft = CSG.cylinder({
+                        start: [0,0,0],
+                        end:   [0,0,this.length],
+                        radius: diameter / 2
+                    });;
+
+        if ( head )
+        {
+            if ( head.shape == 'round' )
+            {
+                shaft = shaft.union(CSG.cylinder({
+                            start: [0,0,this.length],
+                            end:   [0,0,this.length + head.height],
+                            radius: head.diameter / 2
+                        }));
+            }
+        }
+        return shaft;
     }
 
     this.roundPost = function (wallThickness, length)
@@ -185,6 +221,13 @@ washer = function(type, args)
 nut = function(type, args)
 {
     var types = {
+        "1/4-20": {
+            "Name": "1/4-20",
+            "diameter": 12.5, // distance from point to point
+            "length": 11.0,   // distance from side to side
+            "height": 5.0,
+            "screw": "#4-40"
+        },
         "#4-40": {
             "Name": "#4-40",
             "diameter": 7.0, // distance from point to point
