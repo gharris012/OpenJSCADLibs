@@ -32,7 +32,7 @@ makeBorder = function (vec)
     return shell.subtract(inner);
 }
 
-makeTrimSpar = function (width,length,thickness)
+makeTrimSpar = function (width,length,thickness,size)
 {
     var vec = [width, length, thickness];
     var dvec = [
@@ -40,7 +40,7 @@ makeTrimSpar = function (width,length,thickness)
         vec[1]/2,
         vec[2]/2
     ];
-    return CSG.cube({radius: [dvec[0]-dvec[2], dvec[1]-dvec[2], dvec[2]]});
+    return CSG.cube({radius: [dvec[0]-size, dvec[1]-size, dvec[2]]});
 }
 
 makeSpar = function (size, thickness, rot, xh, yh)
@@ -61,7 +61,8 @@ lattice = function (width,length,size,thickness,angle,count,xOffset,yOffset)
     var retval = [];
     var border = makeBorder([width, length, thickness, size]).translate([width/2,length/2,thickness/2]);
     retval.push(border);
-    var trimSpar = makeTrimSpar(width,length,thickness).translate([width/2,length/2,thickness/2]);
+    var trimSpar = makeTrimSpar(width,length,thickness,size).translate([width/2,length/2,thickness/2]);
+    //retval.push(trimSpar.setColor(0,255,0).translate([0,0,10]))
 
     var space = length / count;
 
@@ -69,6 +70,7 @@ lattice = function (width,length,size,thickness,angle,count,xOffset,yOffset)
     yOffset = yOffset || 0;
 
     var xStart = xOffset;
+    var yStart = yOffset;
     var xFinish = width + space;
 
     var spars = [];
@@ -81,6 +83,7 @@ lattice = function (width,length,size,thickness,angle,count,xOffset,yOffset)
     var ySpace = Math.tan((90-angle) * deg2rad) * space;
     var yTotal = length + ( Math.tan((90-angle) * deg2rad) * width );
 
+    // sets this as a global variable for external reference
     sparSpace = ySpace;
 
     for ( xMv = xStart ; xMv < xFinish || yMv < yTotal ; xMv = xMv + space )
@@ -103,7 +106,7 @@ lattice = function (width,length,size,thickness,angle,count,xOffset,yOffset)
     nx = 0;
     yh = 0;
     xh = 0;
-    xStart = width;
+    xStart = width + xOffset;
     xFinish = 0-space;
     for ( xMv = xStart ; xMv > xFinish || yMv < yTotal ; xMv = xMv - space )
     {

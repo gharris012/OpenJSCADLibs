@@ -17,7 +17,7 @@ screw = function(type, args)
                 "pan-square": {
                     "shape": "round",
                     "height": 4.2,
-                    "diameter": 11.8
+                    "diameter": 12.2
                 }
             },
             "defaultLength": 76.0,
