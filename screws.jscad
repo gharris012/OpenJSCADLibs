@@ -33,7 +33,13 @@ screw = function(type, args)
                 "tap": 2.30
             },
             "defaultLength": 6.0,
-            "defaultFit": "free"
+            "defaultFit": "free",
+            "threadedInsert": { // from McMaster Carr: http://www.mcmaster.com/#93365a120/=zf6yg5
+                "a": 3.88, // 0.153"
+                "b": 4.14, // 0.163"
+                "length": 3.42, // 0.135"
+                "taper": 0.70 // percent of length for taper
+            }
         },
         "M2.5": {
             "Name": "M2.5",
@@ -58,8 +64,18 @@ screw = function(type, args)
             },
             "defaultLength": 20.0,
             "defaultFit": "free"
+        },
+        "EG1.5": { // ~ 1.5mm screws from eyeglass repair
+            "Name": "EG1.5",
+            "fit": {
+                "free": 2.0,
+                "close": 1.50,
+                "nominal": 1.55, // diameter including threads as measured using calipers
+                "tap": 1.40
+            },
+            "defaultLength": 5.0,
+            "defaultFit": "free"
         }
-
     };
     this.type = types[type];
     this.length = args && args.length || this.type["defaultLength"];
@@ -133,6 +149,34 @@ screw = function(type, args)
                     end:   [0,0,length],
                     radius: ( this.type.fit[fit] ) / 2
                 });
+    }
+
+    this.threadedInsertHole = function(args)
+    {
+        var ihole = CSG.cylinder({
+                    start: [0,0,0],
+                    end:   [0,0,this.type.threadedInsert.length * this.type.threadedInsert.taper],
+                    radiusStart: this.type.threadedInsert.b / 2,
+                    radiusEnd: this.type.threadedInsert.a / 2
+                }).union(
+                CSG.cylinder({
+                     start: [0,0,0],
+                     end:   [0,0,this.type.threadedInsert.length * ( 1.0 - this.type.threadedInsert.taper )],
+                     radius: this.type.threadedInsert.a / 2
+                 }).translate([0,0,this.type.threadedInsert.length * this.type.threadedInsert.taper])
+                );
+        if ( args && args.extendB )
+        {
+            ihole = ihole.union(
+                CSG.cylinder({
+                     start: [0,0,0],
+                     end:   [0,0,args.extendB],
+                     radius: this.type.threadedInsert.b / 2
+                 }).translate([0,0,-args.extendB])
+                )
+        }
+
+        return ihole;
     }
 }
 
