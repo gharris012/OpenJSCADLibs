@@ -21,7 +21,14 @@ screw = function(type, args)
                 }
             },
             "defaultLength": 76.0,
-            "defaultFit": "free"
+            "defaultFit": "free",
+            "threadedInsert": {    // from McMaster Carr: http://www.mcmaster.com/#93365a160/=10lduwr
+                "a": 8.86,         // 0.349"
+                "b": 9.22,         // 0.363"
+                "length": 7.62,    // 0.300"
+                "diameter": 9.52,  // 0.375"
+                "taper": 0.70 // percent of length for taper
+            }
         },
         "#4-40": {
             "Name": "#4-40",
@@ -49,6 +56,18 @@ screw = function(type, args)
                 "close": 2.7,
                 "nominal": 2.40, // diameter including threads as measured using calipers
                 "tap": 2.15
+            },
+            "defaultLength": 8.0,
+            "defaultFit": "free"
+        },
+        "M3": {
+            "Name": "M3",
+            "fit": { // clearance and tap drill sizes (mostly from: http://www.csgnetwork.com/screwmetmachtable.html)
+                     // do not add tolerance
+                "free": 3.6,
+                "close": 3.2,
+                "nominal": 2.9, // diameter including threads as measured using calipers
+                "tap": 2.50
             },
             "defaultLength": 8.0,
             "defaultFit": "free"
@@ -151,29 +170,59 @@ screw = function(type, args)
                 });
     }
 
+    this.roundThreadedInsertPost = function (args)
+    {
+        var wallThickness = args && args.wallThickness || 2;
+        var length = args && args.length || this.type.threadedInsert.length;
+        var retHole = CSG.cylinder({
+                    start: [0,0,0],
+                    end:   [0,0,length],
+                    radius: ( this.type.threadedInsert.diameter / 2 ) + wallThickness
+                });
+
+        if ( args && args.hole )
+        {
+            retHole = retHole.subtract(this.threadedInsertHole())
+                .rotateX(180)
+                .translate([0,0,length]);
+        }
+
+        return retHole;
+    }
+
     this.threadedInsertHole = function(args)
     {
-        var ihole = CSG.cylinder({
+        var ihole = CSG.cylinder({ // b, with taper
                     start: [0,0,0],
                     end:   [0,0,this.type.threadedInsert.length * this.type.threadedInsert.taper],
                     radiusStart: this.type.threadedInsert.b / 2,
                     radiusEnd: this.type.threadedInsert.a / 2
                 }).union(
-                CSG.cylinder({
+                CSG.cylinder({ // a, straight
                      start: [0,0,0],
                      end:   [0,0,this.type.threadedInsert.length * ( 1.0 - this.type.threadedInsert.taper )],
                      radius: this.type.threadedInsert.a / 2
                  }).translate([0,0,this.type.threadedInsert.length * this.type.threadedInsert.taper])
                 );
-        if ( args && args.extendB )
+
+        // extend B cutout if requested to allow sinking/non-flush mounting
+        if ( args )
         {
-            ihole = ihole.union(
-                CSG.cylinder({
-                     start: [0,0,0],
-                     end:   [0,0,args.extendB],
-                     radius: this.type.threadedInsert.b / 2
-                 }).translate([0,0,-args.extendB])
-                )
+            if ( args.extendB )
+            {
+                ihole = ihole.union(
+                    CSG.cylinder({
+                         start: [0,0,0],
+                         end:   [0,0,args.extendB],
+                         radius: this.type.threadedInsert.b / 2
+                     }).translate([0,0,-args.extendB])
+                    )
+            }
+            if ( args.flipX )
+            {
+                ihole = ihole.rotateX(180)
+                        .translate([0,0,this.type.threadedInsert.length]);
+            }
         }
 
         return ihole;
