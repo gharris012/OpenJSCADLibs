@@ -9,17 +9,17 @@ echo "Found library in ${libdirprefix}${libdir}"
 find ./ -links +1 -type f | grep -q "$(basename $0)" || ( ln "$0" && echo "Linking build script" )
 
 # copy in any library files we need
-cd src
-for i in $(grep -h 'include' *.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p'); do
+for i in $(grep -h 'include' src/*.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p'); do
     echo -n "checking for $i"
-    if [ -f "$i" ]; then
+    if [ -f "src/$i" ]; then
         echo " .. exists"
     elif [ -f "${libdirprefix}${libdir}/$i" ]; then
         echo " .. linking"
-        ln "${libdirprefix}${libdir}/$i"
+        ln "${libdirprefix}${libdir}/$i" "src"
+    else
+        echo " could not find $i in ${libdirprefix}${libdir}"
     fi
 done
-cd ..
 
 grep -q "gcode/" .gitignore &>/dev/null || echo "gcode/" >> .gitignore
 
