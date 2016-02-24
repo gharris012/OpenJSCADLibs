@@ -1,13 +1,41 @@
 # find library directory
 libdir="OpenJSCADLibs"
 libdirprefix=""
-while [ ! -d "${libdirprefix}${libdir}" ]; do
-    libdirprefix="../${libdirprefix}"
-done
-echo "Found library in ${libdirprefix}${libdir}"
+libdircachefile=".libdircache"
+
+# try dirname of the build script first
+if [ -f "$libdircachefile" ]; then
+    libdirprefix=$(<"$libdircachefile")
+else
+    # try build script location first
+    tmpdir="$(dirname $(dirname "$0"))/"
+    if [ -d "${tmpdir}${libdir}" ]; then
+        libdirprefix=$tmpdir
+    else
+        while [ ! -d "${libdirprefix}${libdir}" ]; do
+            libdirprefix="../${libdirprefix}"
+        done
+    fi
+fi
+
+if [ -d "${libdirprefix}${libdir}" ]; then
+    echo "Found library in ${libdirprefix}${libdir}"
+    echo "$libdirprefix" > "$libdircachefile"
+else
+    echo "could not find libdir"
+    exit
+fi
 
 find ./ -links +1 -type f | grep -q "$(basename $0)" || ( ln "$0" && echo "Linking build script" )
 
+echo -n "checking for src directory"
+if [ ! -d 'src' ]; then
+    echo " .. creating"
+    mkdir src
+    cp "${libdirprefix}${libdir}/template_main.jscad" "src/main.jscad"
+else
+    echo " .. exists"
+fi
 # copy in any library files we need
 for i in $(grep -h 'include' src/*.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p'); do
     echo -n "checking for $i"
