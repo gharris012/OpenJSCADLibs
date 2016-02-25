@@ -30,9 +30,10 @@ find ./ -links +1 -type f | grep -q "$(basename $0)" || ( ln "$0" && echo "Linki
 
 echo -n "checking for src directory"
 if [ ! -d 'src' ]; then
-    echo " .. creating"
+    echo -n " .. creating"
     mkdir src
-    cp "${libdirprefix}${libdir}/template_main.jscad" "src/main.jscad"
+    echo " .. copying skeleton"
+    cp "${libdirprefix}${libdir}/skel/"* "src/"
 else
     echo " .. exists"
 fi
