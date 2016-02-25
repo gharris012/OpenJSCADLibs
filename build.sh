@@ -50,6 +50,7 @@ for i in $(grep -h 'include' src/*.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p
 done
 
 grep -q "gcode/" .gitignore &>/dev/null || echo "gcode/" >> .gitignore
+grep -q "$libdircachefile" .gitignore &>/dev/null || echo "$libdircachefile" >> .gitignore
 
 # add links to .gitignore
 find * -links +1 -type f -print0 | xargs -0 -L 1 -I {} sh -c 'grep -q {} .gitignore && echo -n "" || echo {}' >> .gitignore
