@@ -6,14 +6,14 @@
  *  allowHalfHoles: 'yes'/'no'; whether mounting holes can be on the edge of the plate; default: 'yes'
  *
  *  use wallThickness global setting, or 0.5 by default
- *  
+ *
 */
 jigmod = function(params)
 {
     var holeSpacingX = 30;
     var holeSpacingY = 10;
     var holePaddingX = 15;
-    var holePaddingY = 5;
+    var holePaddingY = 4;
 
     wallThickness = wallThickness || 0.5;
 
@@ -21,7 +21,7 @@ jigmod = function(params)
     var allowHalfHoles = params && params.allowHalfHoles || 'yes';
     var plateX = params && params.plateX && params.plateX > 0 && params.plateX || 60;
     var plateY = params && params.plateY && params.plateY > 0 && params.plateY || 30;
-    var plateThickness = 5;
+    var plateThickness = params && params.thickness && params.thickness > 0 && params.thickness || 5;
     var plateCornerFillet = 6;
 
     var plateOutline = CAG.roundedRectangle({

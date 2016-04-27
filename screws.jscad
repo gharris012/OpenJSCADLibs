@@ -138,15 +138,16 @@ screw = function(type, args)
                         })
     }
 
-    this.roundPost = function (wallThickness, length)
+    this.roundPost = function (args)
     {
-        wallThickness = wallThickness || 2;
-        length = length || this.length;
+        var wallThickness = args && args.wallThickness || 2;
+        var fit = args && args.fit || this.fit;
+        var length = args && args.length || this.length;
         return CSG.cylinder({
                     start: [0,0,0],
                     end:   [0,0,length],
                     radius: ( this.diameter / 2 ) + wallThickness
-                }).subtract(this.hole());
+                }).subtract(this.hole(args));
     }
 
     this.squarePost = function (wallThickness, length)
