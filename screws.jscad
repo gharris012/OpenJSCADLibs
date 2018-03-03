@@ -111,7 +111,7 @@ screw = function(type, args)
                         start: [0,0,0],
                         end:   [0,0,this.length],
                         radius: diameter / 2
-                    });;
+                    });
 
         if ( head )
         {
@@ -143,6 +143,7 @@ screw = function(type, args)
         var wallThickness = args && args.wallThickness || 2;
         var fit = args && args.fit || this.fit;
         var length = args && args.length || this.length;
+        length = args && args.postLength || length;
         return CSG.cylinder({
                     start: [0,0,0],
                     end:   [0,0,length],
