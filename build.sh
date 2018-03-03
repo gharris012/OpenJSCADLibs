@@ -28,24 +28,29 @@ else
     exit
 fi
 
-find ./ -links +1 -type f | grep -q "$(basename $0)" || ( ln "$0" && ln "${0%.sh}.cmd" && echo "Linking build scripts" )
+find ./ -links +1 -type f | grep -q "$(basename $0)" || ( ln "$0" && ln "${0%.sh}.cmd" && echo "linking build scripts" )
 
-echo -n "checking for src directory"
-if [ ! -d 'src' ]; then
-    echo -n " .. creating"
-    mkdir src
-    echo " .. copying skeleton"
-    cp "${libdirprefix}${libdir}/skel/"* "src/"
-else
-    echo " .. exists"
+if [ ! -d '.vscode' ]; then
+    echo "linking vscode config"
+    mkdir ".vscode"
 fi
+find "${libdirprefix}${libdir}/.vscode" -type f -exec sh -c '[ -f .vscode/$(basename $1) ] || ln {} .vscode' _ {} \;
+
+grep -q ".vscode/" .gitignore &>/dev/null || echo ".vscode/" >> .gitignore
+
+if [ ! -d 'src' ]; then
+    echo "creating skeleton src"
+    mkdir src
+    cp "${libdirprefix}${libdir}/skel/"* "src/"
+fi
+
 # copy in any library files we need
 for i in $(grep -h 'include' src/*.jscad | sed -rn 's/include\("([^"]*)"\);/\1/p'); do
-    echo -n "checking for $i"
     if [ -f "src/$i" ]; then
-        echo " .. exists"
+        # echo " .. exists"
+        :
     elif [ -f "${libdirprefix}${libdir}/$i" ]; then
-        echo " .. linking"
+        echo " linking $i"
         ln "${libdirprefix}${libdir}/$i" "src"
     else
         echo " could not find $i in ${libdirprefix}${libdir}"
@@ -58,13 +63,10 @@ grep -q "$libdircachefile" .gitignore &>/dev/null || echo "$libdircachefile" >> 
 # add links to .gitignore
 find * -links +1 -type f -print0 | xargs -0 -L 1 -I {} sh -c 'grep -q {} .gitignore && echo -n "" || echo {}' >> .gitignore
 
-echo -n "checking for gcode directory"
 # make gcode directory
 if [ ! -d 'gcode' ]; then
-    echo " .. creating"
+    echo "creating gcode directory"
     mkdir gcode
-else
-    echo " .. exists"
 fi
 
 project="$(basename $0)"
