@@ -1,3 +1,5 @@
+#!env bash
+
 # find library directory
 libdir="OpenJSCADLibs"
 libdirprefix=""
@@ -26,7 +28,7 @@ else
     exit
 fi
 
-find ./ -links +1 -type f | grep -q "$(basename $0)" || ( ln "$0" && echo "Linking build script" )
+find ./ -links +1 -type f | grep -q "$(basename $0)" || ( ln "$0" && ln "${0%.sh}.cmd" && echo "Linking build scripts" )
 
 echo -n "checking for src directory"
 if [ ! -d 'src' ]; then
