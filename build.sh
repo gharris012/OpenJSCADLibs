@@ -1,4 +1,4 @@
-#!env bash
+#!/bin/bash
 
 # find library directory
 libdir="OpenJSCADLibs"
