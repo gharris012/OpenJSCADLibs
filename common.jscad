@@ -10,7 +10,7 @@ Char = function (ltr)
     return union(p).scale(1/6);
 }
 
-makeAxis = function (extents)
+makeAxis = function (extents = [50, 50, 30])
 {
     var axis = [];
     axis.push(cylinder({r:1, h:extents[2] + 5, center:true}).setColor(1,0,255));
